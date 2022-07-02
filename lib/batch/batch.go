@@ -22,14 +22,16 @@ func getBatch(n int64, pool int64) (res []user) {
 	var i int64
 	for i = 0; i < n; i++ {
 		wg.Add(1)
-		go func(nextId int64) {
-			user := getOne(nextId)
-			res = append(res, user)
+		go func(userId int64) {
+			user1 := getOne(userId)
+			res = append(res, user1)
 			Userchan <- res
-			fmt.Println(res)
+			mes := <-Userchan
+			fmt.Println(mes)
 			wg.Done()
 			//close(Userchan)
 		}(i)
+
 		wg.Wait()
 	}
 	return nil
