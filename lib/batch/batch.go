@@ -24,15 +24,28 @@ func getBatch(n int64, pool int64) (res []user) {
 		wg.Add(1)
 		go func(userId int64) {
 			user1 := getOne(userId)
+			var mx sync.Mutex
+			mx.Lock()
+			fmt.Println(user1.ID)
 			res = append(res, user1)
+			mx.Unlock()
 			Userchan <- res
 			mes := <-Userchan
+			//var res2 []user
+			//res2 = append(res2, user1[i])
 			fmt.Println(mes)
 			wg.Done()
 			//close(Userchan)
 		}(i)
 
 		wg.Wait()
+
 	}
 	return nil
 }
+
+// func main() {
+// 	getOne(1)
+// 	fmt.Println(getBatch(1, 1))
+
+// }
