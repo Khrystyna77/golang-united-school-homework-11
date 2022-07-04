@@ -19,18 +19,22 @@ func getBatch(n int64, pool int64) (res []user) {
 	Userchan := make(chan []user, pool)
 	res = make([]user, n)
 	//Userchan := make(chan struct{}, pool)
-	var wg sync.WaitGroup
+
 	var i int64
-	wg.Add(int(pool))
+	var wg sync.WaitGroup
+
 	for i = 0; i < n; i++ {
+		wg.Add(1)
 		go func(userId int64) {
+
 			user1 := getOne(userId)
-			var mx sync.Mutex
+			//var mx sync.Mutex
 			if user1.ID != int64(0) {
-				mx.Lock()
+				//mx.Lock()
 				res = append(res, user1)
-				mx.Unlock()
+				//mx.Unlock()
 				Userchan <- res
+				res[i] = getOne(i)
 				mes := <-Userchan
 				//var res2 []user
 				fmt.Println(mes)
@@ -45,7 +49,7 @@ func getBatch(n int64, pool int64) (res []user) {
 		wg.Wait()
 
 	}
-	return nil
+	return res
 }
 
 // func main() {
