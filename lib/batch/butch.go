@@ -34,17 +34,23 @@ func getBatch(n int64, pool int64) (res []user) {
 			mx.Unlock()
 			//Userchan <- res
 			//res[i] = getOne(i)
-			<-Userchan
+			//<-Userchan
 			//var res2 []user
 			//fmt.Println(res)
+			_, ok := <-Userchan
+			if !ok {
+				return
+				//	fmt.Println("channel close")
+			}
 
 			//res2 = append(res2, user1[i])
 
 			wg.Done()
-			//close(Userchan)
+
 		}(i)
 	}
 	wg.Wait()
+	close(Userchan)
 	return
 }
 
